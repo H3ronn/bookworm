@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import BookItem from '../BookItem/BookItem';
+import { debounce } from 'lodash';
 
 interface IResources {
   id: number;
@@ -17,7 +18,7 @@ interface IBook {
 }
 
 const BookList = () => {
-  const [data, setData] = useState<IBook[] | null>(null);
+  const [books, setBooks] = useState<IBook[] | null>(null);
   const [page, setPage] = useState(1);
   const [favorite, setFavorite] = useState<number[]>([]);
 
@@ -52,29 +53,40 @@ const BookList = () => {
     return undefined;
   };
 
+  const searchInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+    getBooks(e.currentTarget.value);
+  };
+
+  const getBooks = debounce((searchValue = '') => {
+    axios
+      .get(`https://gnikdroy.pythonanywhere.com/api/book?page=${page}&search=${searchValue}`)
+      .then(({ data }) => {
+        setBooks(data.results);
+      });
+  }, 1000);
+
   useEffect(() => {
-    axios.get(`https://gnikdroy.pythonanywhere.com/api/book?page=${page}`).then(({ data }) => {
-      setData(data.results);
-    });
-  }, [page, setData]);
+    getBooks();
+  }, [page]);
 
   return (
     <div>
       <h1>BookWorm</h1>
+      <input name="search" id="search" onChange={searchInputChange} />
       <button onClick={prevPage}>Prev page</button>
       <button onClick={nextPage}>Next page</button>
-      {!!data &&
-        data.map((book) => {
-          const imgLink = getImageLink(book.resources);
+      {!!books &&
+        books.map(({ id, description, resources, title }) => {
+          const imgLink = getImageLink(resources);
           return (
             <BookItem
-              key={book.id}
-              id={book.id}
-              title={book.title}
+              key={id}
+              id={id}
+              title={title}
               toggleFavorite={toggleFavorite}
               image={imgLink}
-              description={book.description}
-              isFavorite={isFavorite(book.id)}
+              description={description}
+              isFavorite={isFavorite(id)}
             />
           );
         })}
