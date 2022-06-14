@@ -43,14 +43,12 @@ const BookList = () => {
     return favorite.includes(id);
   };
 
-  const getImageLink = (resources: IResources[]): string | undefined => {
+  const getImageLink = (resources: IResources[]): string => {
     const resourceWithImage = resources.find(
       (resource) => resource.type === 'image/jpeg' && resource.uri.includes('.medium.'),
     );
-    if (resourceWithImage) {
-      return resourceWithImage.uri;
-    }
-    return undefined;
+
+    return resourceWithImage ? resourceWithImage.uri : '';
   };
 
   const searchInputChange = (e: React.FormEvent<HTMLInputElement>) => {

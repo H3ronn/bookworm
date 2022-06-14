@@ -4,7 +4,7 @@ interface IPropsBookItem {
   id: number;
   title: string;
   toggleFavorite: (id: number) => void;
-  image: string | undefined;
+  image: string;
   description: string;
   isFavorite: boolean;
 }
