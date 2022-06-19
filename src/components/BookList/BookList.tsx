@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BookItem from '../BookItem/BookItem';
 import { debounce } from 'lodash';
@@ -32,8 +32,8 @@ const BookList = () => {
 
   const toggleFavorite = (bookId: number) => {
     if (favorite.includes(bookId)) {
-      const filteredFavourite = favorite.filter((favId) => favId !== bookId);
-      setFavorite(filteredFavourite);
+      const filteredFavorite = favorite.filter((favId) => favId !== bookId);
+      setFavorite(filteredFavorite);
     } else {
       setFavorite((prev) => [...prev, bookId]);
     }
