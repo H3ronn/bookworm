@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BookItem from '../BookItem/BookItem';
 import { debounce } from 'lodash';
+import InputField from 'components/InputField/InputField';
+import Button from 'components/Button/Button';
+import { ReactComponent as StarSvg } from 'assets/images/star.svg';
+import styled from 'styled-components';
 
 interface IResources {
   id: number;
@@ -16,6 +20,15 @@ interface IBook {
   subjects: string[];
   resources: IResources[];
 }
+
+const FilterButtons = styled.div`
+  @media (min-width: 800px) {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    gap: 0 10px;
+  }
+`;
 
 const BookList = () => {
   const [books, setBooks] = useState<IBook[] | null>(null);
@@ -68,13 +81,22 @@ const BookList = () => {
   }, [page]);
 
   return (
-    <div>
-      <h1>BookWorm</h1>
-      <input name="search" id="search" onChange={searchInputChange} />
-      <button onClick={prevPage}>Prev page</button>
-      <button onClick={nextPage}>Next page</button>
+    <main>
+      <InputField
+        label="Search"
+        name="search"
+        type="text"
+        id="label"
+        onChange={searchInputChange}
+      />
+      <FilterButtons>
+        <Button>
+          Show favourite <StarSvg />
+        </Button>
+        <Button>Filter by name</Button>
+      </FilterButtons>
       {!!books &&
-        books.map(({ id, description, resources, title }) => {
+        books.map(({ id, resources, title }) => {
           const imgLink = getImageLink(resources);
           return (
             <BookItem
@@ -83,12 +105,11 @@ const BookList = () => {
               title={title}
               toggleFavorite={toggleFavorite}
               image={imgLink}
-              description={description}
               isFavorite={isFavorite(id)}
             />
           );
         })}
-    </div>
+    </main>
   );
 };
 

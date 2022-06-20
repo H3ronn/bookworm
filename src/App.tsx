@@ -8,30 +8,12 @@ import InputField from 'components/InputField/InputField';
 import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
 
-const FilterButtons = styled.div`
-  @media (min-width: 800px) {
-    display: flex;
-    width: fit-content;
-    margin: 0 auto;
-    gap: 0 10px;
-  }
-`;
-
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Hero />
-      <main>
-        <InputField label="Search" name="search" type="text" id="label" />
-        <FilterButtons>
-          <Button>
-            Show favourite <StarSvg />
-          </Button>
-          <Button>Filter by name</Button>
-        </FilterButtons>
-        <BookList />
-      </main>
+      <BookList />
     </ThemeProvider>
   );
 };

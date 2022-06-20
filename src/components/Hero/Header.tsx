@@ -40,7 +40,6 @@ const Title = styled.h1`
 
 const Paragraph = styled.p`
   margin: 0;
-  font-size: 1.6rem;
 
   @media (min-width: 800px) {
     font-size: 3rem;

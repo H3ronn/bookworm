@@ -23,7 +23,6 @@ const Wrapper = styled.div`
 `;
 const Label = styled.label`
   color: ${({ theme }) => theme.colors.dark};
-  font-size: 1.6rem;
   font-weight: 400;
 
   @media (min-width: 800px) {
@@ -48,13 +47,14 @@ interface IInputFieldProps {
   name: string;
   type: string;
   id: string;
+  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-const InputField = ({ label, name, type, id }: IInputFieldProps) => {
+const InputField = ({ label, name, type, id, onChange }: IInputFieldProps) => {
   return (
     <Wrapper>
       <Label htmlFor={id}>{label}</Label>
-      <Input name={name} id={id} type={type} />
+      <Input name={name} id={id} type={type} onChange={onChange} />
     </Wrapper>
   );
 };
