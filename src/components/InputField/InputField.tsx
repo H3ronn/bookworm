@@ -1,28 +1,34 @@
 import React from 'react';
-import BookList from 'components/BookList/BookList';
-import styled, { ThemeProvider } from 'styled-components';
-import { theme } from 'assets/styles/theme';
-import GlobalStyle from 'assets/styles/GlobalStyle';
-import Hero from 'components/Hero/Header';
+import styled from 'styled-components';
 import SearchSvg from 'assets/images/search.svg';
 
 const Wrapper = styled.div`
   position: relative;
-  margin: 0 auto;
+  margin: 20px auto 0;
   width: 250px;
   &::after {
     position: absolute;
     content: url(${SearchSvg});
-    bottom: 5px;
+    bottom: 6px;
     right: 8px;
     width: 20px;
     height: 20px;
+    @media (min-width: 800px) {
+      bottom: 10px;
+    }
+  }
+  @media (min-width: 800px) {
+    width: 400px;
   }
 `;
 const Label = styled.label`
   color: ${({ theme }) => theme.colors.dark};
   font-size: 1.6rem;
   font-weight: 400;
+
+  @media (min-width: 800px) {
+    font-size: 2rem;
+  }
 `;
 const Input = styled.input`
   background-color: ${({ theme }) => theme.colors.light};
@@ -30,7 +36,11 @@ const Input = styled.input`
   border-radius: 10px;
   display: block;
   width: 100%;
-  padding: 7px 10px;
+  padding: 8px 10px;
+  font-family: inherit;
+  @media (min-width: 800px) {
+    font-size: 2rem;
+  }
 `;
 
 interface IInputFieldProps {
