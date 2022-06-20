@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { ReactComponent as BookSvg } from 'assets/images/book2.svg';
+import { ReactComponent as BookSvg } from 'assets/images/book.svg';
 import { ReactComponent as ArrowDown } from 'assets/images/arrow-down.svg';
 import backgroundImage from 'assets/images/bg.jpg';
 
@@ -30,14 +30,11 @@ const Wrapper = styled.header`
 
 const Title = styled.h1`
   font-size: 4rem;
+  font-weight: 600;
   margin: 0;
 
   @media (min-width: 800px) {
     font-size: 8rem;
-  }
-
-  svg {
-    margin-left: 5px;
   }
 `;
 
@@ -57,12 +54,22 @@ const StyledArrowDown = styled(ArrowDown)`
   animation: ${waving} 2s ease-in-out infinite alternate;
 `;
 
+const StyledBookSvg = styled(BookSvg)`
+  margin-left: 5px;
+  width: 60px;
+  height: 40px;
+  @media (min-width: 800px) {
+    width: 90px;
+    height: 60px;
+  }
+`;
+
 const Header = () => {
   return (
     <Wrapper>
       <Title>
         Bookworm
-        <BookSvg />
+        <StyledBookSvg />
       </Title>
       <Paragraph>Discover many interesting books!</Paragraph>
       <StyledArrowDown />

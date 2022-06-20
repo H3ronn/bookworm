@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from 'assets/styles/theme';
 import GlobalStyle from 'assets/styles/GlobalStyle';
 import Hero from 'components/Hero/Header';
+import InputField from 'components/InputField/InputField';
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <GlobalStyle />
       <Hero />
       <main>
+        <InputField label="Search" name="search" type="text" id="label" />
         <BookList />
       </main>
     </ThemeProvider>
