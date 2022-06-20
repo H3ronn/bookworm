@@ -6,10 +6,17 @@ import InputField from 'components/InputField/InputField';
 import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
 import styled from 'styled-components';
+import { getAuthorName } from 'helpers/getAuthorName';
 
 interface IResources {
   id: number;
   uri: string;
+  type: string;
+}
+
+export interface IAgents {
+  id: number;
+  person: string;
   type: string;
 }
 
@@ -19,6 +26,7 @@ interface IBook {
   title: string;
   subjects: string[];
   resources: IResources[];
+  agents: IAgents[];
 }
 
 const FilterButtons = styled.div`
@@ -76,6 +84,25 @@ const BookList = () => {
       });
   }, 1000);
 
+  const getAuthors = (agents: IAgents[]): string => {
+    const authors = agents.filter((agent) => agent.type === 'Author');
+
+    if (authors.length <= 0) return '';
+
+    if (authors.length === 1) {
+      return getAuthorName(agents[0]);
+    }
+
+    const agentsListString = agents.reduce((acc, curr) => {
+      const authorName = getAuthorName(curr);
+      if (acc.length <= 1) {
+        return authorName;
+      }
+      return acc + ', ' + authorName;
+    }, '');
+    return agentsListString;
+  };
+
   useEffect(() => {
     getBooks();
   }, [page]);
@@ -96,7 +123,7 @@ const BookList = () => {
         <Button>Filter by name</Button>
       </FilterButtons>
       {!!books &&
-        books.map(({ id, resources, title }) => {
+        books.map(({ id, resources, title, agents }) => {
           const imgLink = getImageLink(resources);
           return (
             <BookItem
@@ -106,6 +133,7 @@ const BookList = () => {
               toggleFavorite={toggleFavorite}
               image={imgLink}
               isFavorite={isFavorite(id)}
+              authors={getAuthors(agents)}
             />
           );
         })}

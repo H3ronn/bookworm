@@ -7,6 +7,7 @@ interface IPropsBookItem {
   toggleFavorite: (id: number) => void;
   image: string;
   isFavorite: boolean;
+  authors: string;
 }
 
 const Wrapper = styled.div`
@@ -40,7 +41,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const BookItem = ({ id, image, isFavorite, title, toggleFavorite }: IPropsBookItem) => {
+const BookItem = ({ id, image, isFavorite, title, authors, toggleFavorite }: IPropsBookItem) => {
   return (
     <Wrapper style={isFavorite ? { border: '6px solid yellow' } : {}}>
       <img style={{ display: 'block' }} src={image} alt="" />
@@ -49,6 +50,7 @@ const BookItem = ({ id, image, isFavorite, title, toggleFavorite }: IPropsBookIt
           {isFavorite ? 'Delete from favorite' : 'Mark as favorite'}
         </button>
         <h2>{title}</h2>
+        <p>{authors}</p>
         <a href="">Read this book</a>
       </div>
     </Wrapper>
