@@ -43,14 +43,6 @@ const BookList = () => {
   const [page, setPage] = useState(1);
   const [favorite, setFavorite] = useState<number[]>([]);
 
-  const nextPage = () => {
-    setPage((prev) => prev + 1);
-  };
-
-  const prevPage = () => {
-    setPage((prev) => prev - 1);
-  };
-
   const toggleFavorite = (bookId: number) => {
     if (favorite.includes(bookId)) {
       const filteredFavorite = favorite.filter((favId) => favId !== bookId);
@@ -103,6 +95,14 @@ const BookList = () => {
     return agentsListString;
   };
 
+  const nextPage = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const prevPage = () => {
+    setPage((prev) => prev - 1);
+  };
+
   useEffect(() => {
     getBooks();
   }, [page]);
@@ -117,11 +117,27 @@ const BookList = () => {
         onChange={searchInputChange}
       />
       <FilterButtons>
-        <Button>
+        <Button
+          onClick={() => {
+            console.log('show');
+          }}
+        >
           Show favourite <StarSvg />
         </Button>
-        <Button>Filter by name</Button>
+        <Button
+          onClick={() => {
+            console.log('filter');
+          }}
+        >
+          Filter by name
+        </Button>
       </FilterButtons>
+      <Button onClick={prevPage} inline={true}>
+        Prev page
+      </Button>
+      <Button onClick={nextPage} inline={true}>
+        Next page
+      </Button>
       {!!books &&
         books.map(({ id, resources, title, agents }) => {
           const imgLink = getImageLink(resources);
