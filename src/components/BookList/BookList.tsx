@@ -42,6 +42,7 @@ const BookList = () => {
   const [books, setBooks] = useState<IBook[] | null>(null);
   const [page, setPage] = useState(1);
   const [favorite, setFavorite] = useState<number[]>([]);
+  const [filterBy, setFilterBy] = useState<'-title' | 'title' | null>(null);
 
   const toggleFavorite = (bookId: number) => {
     if (favorite.includes(bookId)) {
@@ -69,12 +70,26 @@ const BookList = () => {
   };
 
   const getBooks = debounce((searchValue = '') => {
+    console.log(page, searchValue, filterBy);
     axios
-      .get(`https://gnikdroy.pythonanywhere.com/api/book?page=${page}&search=${searchValue}`)
+      .get(
+        `https://gnikdroy.pythonanywhere.com/api/book?page=${page}&search=${searchValue}&ordering=${filterBy}`,
+      )
       .then(({ data }) => {
         setBooks(data.results);
+        console.log(data);
       });
   }, 1000);
+
+  const setFilters = () => {
+    if (filterBy === null) {
+      setFilterBy('title');
+    } else if (filterBy === 'title') {
+      setFilterBy('-title');
+    } else {
+      setFilterBy(null);
+    }
+  };
 
   const getAuthors = (agents: IAgents[]): string => {
     const authors = agents.filter((agent) => agent.type === 'Author');
@@ -124,22 +139,17 @@ const BookList = () => {
         >
           Show favourite <StarSvg />
         </Button>
-        <Button
-          onClick={() => {
-            console.log('filter');
-          }}
-        >
-          Filter by name
-        </Button>
+        <Button onClick={setFilters}>Filter by name</Button>
       </FilterButtons>
-      <Button onClick={prevPage} inline={true}>
+      <Button onClick={prevPage} inline>
         Prev page
       </Button>
-      <Button onClick={nextPage} inline={true}>
+      <Button onClick={nextPage} inline>
         Next page
       </Button>
       {!!books &&
         books.map(({ id, resources, title, agents }) => {
+          if (!title) return;
           const imgLink = getImageLink(resources);
           return (
             <BookItem
