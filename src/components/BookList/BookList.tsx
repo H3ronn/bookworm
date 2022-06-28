@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import BookItem from '../BookItem/BookItem';
-import { debounce } from 'lodash';
 import InputField from 'components/InputField/InputField';
 import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
 import styled from 'styled-components';
 import { getAuthorName } from 'helpers/getAuthorName';
-import { Filters, getBooks, GetBooksResponse } from 'api/books';
+import { Filters, getBooks } from 'api/books';
 import { asyncDebounce } from 'helpers/asyncDebounce';
 import Loading from 'components/Loading/Loading';
+import { FilterButtons, PagesControls } from './BookList.styles';
 
 interface IResources {
   id: number;
@@ -31,15 +30,6 @@ interface IBook {
   resources: IResources[];
   agents: IAgents[];
 }
-
-const FilterButtons = styled.div`
-  @media (min-width: 800px) {
-    display: flex;
-    width: fit-content;
-    margin: 0 auto;
-    gap: 0 10px;
-  }
-`;
 
 const BookList = () => {
   const [books, setBooks] = useState<IBook[]>([]);
@@ -165,14 +155,13 @@ const BookList = () => {
         </Button>
         <Button onClick={setFilters}>Filter by name</Button>
       </FilterButtons>
-      <Button onClick={prevPage} inline>
-        Prev page
-      </Button>
-      <p style={{ display: 'inline-block', padding: '0 10px' }}>Page: {page}</p>
-      <Button onClick={nextPage} inline>
-        Next page
-      </Button>
+      <PagesControls>
+        <Button onClick={prevPage}>Prev page</Button>
+        <p>Page: {page}</p>
+        <Button onClick={nextPage}>Next page</Button>
+      </PagesControls>
       {isLoading ? <Loading /> : null}
+      {!isLoading && books.length === 0 ? <p>No matching books</p> : null}
       {books.length && !onlyFavorites
         ? books.map((book) => {
             const { id, resources, title, agents } = book;
