@@ -126,6 +126,7 @@ const BookList = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    setBooks([]);
     (async () => {
       const data = await debouncedGetBooks({
         search: searchValue,
