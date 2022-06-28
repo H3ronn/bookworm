@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { getAuthorName } from 'helpers/getAuthorName';
 import { Filters, getBooks, GetBooksResponse } from 'api/books';
 import { asyncDebounce } from 'helpers/asyncDebounce';
+import Loading from 'components/Loading/Loading';
 
 interface IResources {
   id: number;
@@ -171,7 +172,7 @@ const BookList = () => {
       <Button onClick={nextPage} inline>
         Next page
       </Button>
-      {isLoading ? <h2>Loading...</h2> : null}
+      {isLoading ? <Loading /> : null}
       {books.length && !onlyFavorites
         ? books.map((book) => {
             const { id, resources, title, agents } = book;
