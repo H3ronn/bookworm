@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import BookItem from '../BookItem/BookItem';
 import { debounce } from 'lodash';
@@ -29,6 +29,12 @@ interface IBook {
   agents: IAgents[];
 }
 
+interface getBooksOptions {
+  search: string;
+  filterBy: '-title' | 'title' | null;
+  page: number;
+}
+
 const FilterButtons = styled.div`
   @media (min-width: 800px) {
     display: flex;
@@ -43,6 +49,7 @@ const BookList = () => {
   const [page, setPage] = useState(1);
   const [favorite, setFavorite] = useState<number[]>([]);
   const [filterBy, setFilterBy] = useState<'-title' | 'title' | null>(null);
+  const [searchValue, setSearchValue] = useState('');
 
   const toggleFavorite = (bookId: number) => {
     if (favorite.includes(bookId)) {
@@ -66,20 +73,22 @@ const BookList = () => {
   };
 
   const searchInputChange = (e: React.FormEvent<HTMLInputElement>) => {
-    getBooks(e.currentTarget.value);
+    setSearchValue(e.currentTarget.value);
   };
 
-  const getBooks = debounce((searchValue = '') => {
-    console.log(page, searchValue, filterBy);
+  const getBooks = (options: getBooksOptions) => {
+    console.log(options.page, options.search, options.filterBy);
     axios
       .get(
-        `https://gnikdroy.pythonanywhere.com/api/book?page=${page}&search=${searchValue}&ordering=${filterBy}`,
+        `https://gnikdroy.pythonanywhere.com/api/book?page=${options.page}&search=${options.search}&ordering=${options.filterBy}`,
       )
       .then(({ data }) => {
         setBooks(data.results);
         console.log(data);
       });
-  }, 1000);
+  };
+
+  const debouncedGetBooks = useCallback(debounce(getBooks, 1000), [page, filterBy]);
 
   const setFilters = () => {
     if (filterBy === null) {
@@ -119,8 +128,8 @@ const BookList = () => {
   };
 
   useEffect(() => {
-    getBooks();
-  }, [page]);
+    debouncedGetBooks({ search: searchValue, page, filterBy });
+  }, [searchValue, page, filterBy]);
 
   return (
     <main>
@@ -130,6 +139,7 @@ const BookList = () => {
         type="text"
         id="label"
         onChange={searchInputChange}
+        value={searchValue}
       />
       <FilterButtons>
         <Button

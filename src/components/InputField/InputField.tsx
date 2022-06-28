@@ -48,13 +48,14 @@ interface IInputFieldProps {
   type: string;
   id: string;
   onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  value: string;
 }
 
-const InputField = ({ label, name, type, id, onChange }: IInputFieldProps) => {
+const InputField = ({ label, name, type, id, onChange, value }: IInputFieldProps) => {
   return (
     <Wrapper>
       <Label htmlFor={id}>{label}</Label>
-      <Input name={name} id={id} type={type} onChange={onChange} />
+      <Input name={name} id={id} type={type} onChange={onChange} value={value} />
     </Wrapper>
   );
 };
