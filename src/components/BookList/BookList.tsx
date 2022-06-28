@@ -7,6 +7,8 @@ import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
 import styled from 'styled-components';
 import { getAuthorName } from 'helpers/getAuthorName';
+import { Filters, getBooks, GetBooksResponse } from 'components/api/books';
+import { asyncDebounce } from 'helpers/asyncDebounce';
 
 interface IResources {
   id: number;
@@ -29,14 +31,6 @@ interface IBook {
   agents: IAgents[];
 }
 
-type filters = '-title' | 'title' | null;
-
-interface getBooksOptions {
-  search: string;
-  filterBy: filters;
-  page: number;
-}
-
 const FilterButtons = styled.div`
   @media (min-width: 800px) {
     display: flex;
@@ -50,9 +44,12 @@ const BookList = () => {
   const [books, setBooks] = useState<IBook[]>([]);
   const [page, setPage] = useState(1);
   const [favorites, setFavorites] = useState<IBook[]>([]);
-  const [filterBy, setFilterBy] = useState<filters>(null);
+  const [filterBy, setFilterBy] = useState<Filters>('');
   const [searchValue, setSearchValue] = useState('');
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [prevPageExist, setPrevPageExist] = useState(false);
+  const [nextPageExist, setNextPageExist] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleFavorite = (book: IBook) => {
     if (favorites.includes(book)) {
@@ -83,27 +80,13 @@ const BookList = () => {
     setSearchValue(e.currentTarget.value);
   };
 
-  const getBooks = (options: getBooksOptions) => {
-    console.log(options.page, options.search, options.filterBy);
-    axios
-      .get(
-        `https://gnikdroy.pythonanywhere.com/api/book?page=${options.page}&search=${options.search}&ordering=${options.filterBy}`,
-      )
-      .then(({ data }) => {
-        setBooks(data.results);
-        console.log(data);
-      });
-  };
-
-  const debouncedGetBooks = useCallback(debounce(getBooks, 1000), [page, filterBy]);
-
   const setFilters = () => {
     if (filterBy === null) {
       setFilterBy('title');
     } else if (filterBy === 'title') {
       setFilterBy('-title');
     } else {
-      setFilterBy(null);
+      setFilterBy('');
     }
   };
 
@@ -127,15 +110,41 @@ const BookList = () => {
   };
 
   const nextPage = () => {
-    setPage((prev) => prev + 1);
+    if (nextPageExist && !isLoading) {
+      console.log('click');
+      setPage((prev) => prev + 1);
+    }
   };
 
   const prevPage = () => {
-    setPage((prev) => prev - 1);
+    if (prevPageExist && !isLoading) {
+      setPage((prev) => prev - 1);
+    }
   };
 
+  const debouncedGetBooks = useCallback(asyncDebounce(getBooks, 1000), []);
+
   useEffect(() => {
-    debouncedGetBooks({ search: searchValue, page, filterBy });
+    setIsLoading(true);
+    (async () => {
+      const data = await debouncedGetBooks({
+        search: searchValue,
+        page,
+        filterBy,
+      });
+      if (typeof data === 'string') {
+        console.log('wyjebka');
+      } else {
+        //idk how to fix return type undefined when wrapping getBooks to debounce
+        // fixed by async friendly debounce? I will back later when a will be stronger
+        setBooks(data.results);
+
+        setPrevPageExist(!!data.previous);
+        setNextPageExist(!!data.next);
+
+        setIsLoading(false);
+      }
+    })();
   }, [searchValue, page, filterBy]);
 
   return (
@@ -157,6 +166,7 @@ const BookList = () => {
       <Button onClick={prevPage} inline>
         Prev page
       </Button>
+      <p style={{ display: 'inline-block', padding: '0 10px' }}>Page: {page}</p>
       <Button onClick={nextPage} inline>
         Next page
       </Button>
