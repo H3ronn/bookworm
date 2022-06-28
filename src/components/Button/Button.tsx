@@ -14,7 +14,9 @@ const ButtonWrapper = styled.button<Pick<IButtonProps, 'inline'>>`
   font-size: 1.6rem;
   padding: 8px 18px;
   border-radius: 10px;
-  display: ${({ inline }) => (inline ? 'inline' : 'block')};
+  display: ${({ inline }) => (inline ? 'inline' : 'flex')};
+  align-items: center;
+  gap: 5px;
   margin: 10px auto;
   cursor: pointer;
   font-family: inherit;
