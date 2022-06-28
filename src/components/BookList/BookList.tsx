@@ -7,7 +7,7 @@ import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
 import styled from 'styled-components';
 import { getAuthorName } from 'helpers/getAuthorName';
-import { Filters, getBooks, GetBooksResponse } from 'components/api/books';
+import { Filters, getBooks, GetBooksResponse } from 'api/books';
 import { asyncDebounce } from 'helpers/asyncDebounce';
 
 interface IResources {
@@ -171,6 +171,7 @@ const BookList = () => {
       <Button onClick={nextPage} inline>
         Next page
       </Button>
+      {isLoading ? <h2>Loading...</h2> : null}
       {books.length && !onlyFavorites
         ? books.map((book) => {
             const { id, resources, title, agents } = book;
