@@ -4,7 +4,7 @@ import styled from 'styled-components';
 interface IPropsBookItem {
   id: number;
   title: string;
-  toggleFavorite: (id: number) => void;
+  toggleFavorite: () => void;
   image: string;
   isFavorite: boolean;
   authors: string;
@@ -28,6 +28,7 @@ const Wrapper = styled.div`
     border: none;
     color: inherit;
     padding: 0;
+    cursor: pointer;
   }
 
   a {
@@ -41,12 +42,12 @@ const Wrapper = styled.div`
   }
 `;
 
-const BookItem = ({ id, image, isFavorite, title, authors, toggleFavorite }: IPropsBookItem) => {
+const BookItem = ({ image, isFavorite, title, authors, toggleFavorite }: IPropsBookItem) => {
   return (
     <Wrapper style={isFavorite ? { border: '6px solid yellow' } : {}}>
       <img style={{ display: 'block' }} src={image} alt="" />
       <div>
-        <button onClick={() => toggleFavorite(id)}>
+        <button onClick={toggleFavorite}>
           {isFavorite ? 'Delete from favorite' : 'Mark as favorite'}
         </button>
         <h2>{title}</h2>

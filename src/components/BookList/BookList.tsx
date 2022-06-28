@@ -29,9 +29,11 @@ interface IBook {
   agents: IAgents[];
 }
 
+type filters = '-title' | 'title' | null;
+
 interface getBooksOptions {
   search: string;
-  filterBy: '-title' | 'title' | null;
+  filterBy: filters;
   page: number;
 }
 
@@ -45,23 +47,28 @@ const FilterButtons = styled.div`
 `;
 
 const BookList = () => {
-  const [books, setBooks] = useState<IBook[] | null>(null);
+  const [books, setBooks] = useState<IBook[]>([]);
   const [page, setPage] = useState(1);
-  const [favorite, setFavorite] = useState<number[]>([]);
-  const [filterBy, setFilterBy] = useState<'-title' | 'title' | null>(null);
+  const [favorites, setFavorites] = useState<IBook[]>([]);
+  const [filterBy, setFilterBy] = useState<filters>(null);
   const [searchValue, setSearchValue] = useState('');
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
 
-  const toggleFavorite = (bookId: number) => {
-    if (favorite.includes(bookId)) {
-      const filteredFavorite = favorite.filter((favId) => favId !== bookId);
-      setFavorite(filteredFavorite);
+  const toggleFavorite = (book: IBook) => {
+    if (favorites.includes(book)) {
+      const filteredFavorite = favorites.filter(({ id }) => id !== book.id);
+      setFavorites(filteredFavorite);
     } else {
-      setFavorite((prev) => [...prev, bookId]);
+      setFavorites((prev) => [...prev, book]);
     }
   };
 
+  const toggleOnlyFavorites = () => {
+    setOnlyFavorites((prev) => !prev);
+  };
+
   const isFavorite = (id: number): boolean => {
-    return favorite.includes(id);
+    return !!favorites.find((book) => book.id === id);
   };
 
   const getImageLink = (resources: IResources[]): string => {
@@ -142,11 +149,7 @@ const BookList = () => {
         value={searchValue}
       />
       <FilterButtons>
-        <Button
-          onClick={() => {
-            console.log('show');
-          }}
-        >
+        <Button onClick={toggleOnlyFavorites}>
           Show favourite <StarSvg />
         </Button>
         <Button onClick={setFilters}>Filter by name</Button>
@@ -157,22 +160,42 @@ const BookList = () => {
       <Button onClick={nextPage} inline>
         Next page
       </Button>
-      {!!books &&
-        books.map(({ id, resources, title, agents }) => {
-          if (!title) return;
-          const imgLink = getImageLink(resources);
-          return (
-            <BookItem
-              key={id}
-              id={id}
-              title={title}
-              toggleFavorite={toggleFavorite}
-              image={imgLink}
-              isFavorite={isFavorite(id)}
-              authors={getAuthors(agents)}
-            />
-          );
-        })}
+      {books.length && !onlyFavorites
+        ? books.map((book) => {
+            const { id, resources, title, agents } = book;
+            if (!title) return;
+            const imgLink = getImageLink(resources);
+            return (
+              <BookItem
+                key={id}
+                id={id}
+                title={title}
+                toggleFavorite={() => toggleFavorite(book)}
+                image={imgLink}
+                isFavorite={isFavorite(id)}
+                authors={getAuthors(agents)}
+              />
+            );
+          })
+        : null}
+      {onlyFavorites && favorites.length
+        ? favorites.map((book) => {
+            const { id, resources, title, agents } = book;
+            if (!title) return;
+            const imgLink = getImageLink(resources);
+            return (
+              <BookItem
+                key={id}
+                id={id}
+                title={title}
+                toggleFavorite={() => toggleFavorite(book)}
+                image={imgLink}
+                isFavorite={isFavorite(id)}
+                authors={getAuthors(agents)}
+              />
+            );
+          })
+        : null}
     </main>
   );
 };
