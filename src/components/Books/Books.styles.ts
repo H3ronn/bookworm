@@ -18,3 +18,16 @@ export const PagesControls = styled.div`
   max-width: 400px;
   margin: 0 auto;
 `;
+
+export const BookList = styled.ul`
+  padding: 0;
+
+  @media (min-width: 700px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1000px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+`;

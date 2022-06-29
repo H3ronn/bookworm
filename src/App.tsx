@@ -1,5 +1,5 @@
 import React from 'react';
-import BookList from 'components/BookList/BookList';
+import Books from 'components/Books/Books';
 import { ThemeProvider } from 'styled-components';
 import { theme } from 'assets/styles/theme';
 import GlobalStyle from 'assets/styles/GlobalStyle';
@@ -10,7 +10,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <Hero />
-      <BookList />
+      <Books />
     </ThemeProvider>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { ReactComponent as BookSvg } from 'assets/images/book.svg';
-import { ReactComponent as ArrowDown } from 'assets/images/arrow-down.svg';
+import { ReactComponent as ArrowDown } from 'assets/images/arrow-down-header.svg';
 import backgroundImage from 'assets/images/bg.jpg';
 
 const waving = keyframes`

@@ -10,7 +10,7 @@ interface IPropsBookItem {
   authors: string;
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.li`
   display: flex;
   gap: 0 10px;
   color: ${({ theme }) => theme.colors.dark};

@@ -3,12 +3,12 @@ import BookItem from '../BookItem/BookItem';
 import InputField from 'components/InputField/InputField';
 import Button from 'components/Button/Button';
 import { ReactComponent as StarSvg } from 'assets/images/star.svg';
-import styled from 'styled-components';
 import { getAuthorName } from 'helpers/getAuthorName';
 import { Filters, getBooks } from 'api/books';
 import { asyncDebounce } from 'helpers/asyncDebounce';
 import Loading from 'components/Loading/Loading';
-import { FilterButtons, PagesControls } from './BookList.styles';
+import { BookList, FilterButtons, PagesControls } from './Books.styles';
+import { Arrow } from 'components/Arrow/Arrow';
 
 interface IResources {
   id: number;
@@ -31,7 +31,7 @@ interface IBook {
   agents: IAgents[];
 }
 
-const BookList = () => {
+const Books = () => {
   const [books, setBooks] = useState<IBook[]>([]);
   const [page, setPage] = useState(1);
   const [favorites, setFavorites] = useState<IBook[]>([]);
@@ -72,7 +72,7 @@ const BookList = () => {
   };
 
   const setFilters = () => {
-    if (filterBy === null) {
+    if (filterBy === '') {
       setFilterBy('title');
     } else if (filterBy === 'title') {
       setFilterBy('-title');
@@ -102,7 +102,6 @@ const BookList = () => {
 
   const nextPage = () => {
     if (nextPageExist && !isLoading) {
-      console.log('click');
       setPage((prev) => prev + 1);
     }
   };
@@ -125,7 +124,7 @@ const BookList = () => {
         filterBy,
       });
       if (typeof data === 'string') {
-        console.log('wyjebka');
+        console.log('failed');
       } else {
         //idk how to fix return type undefined when wrapping getBooks to debounce
         // fixed by async friendly debounce? I will back later when a will be stronger
@@ -153,7 +152,11 @@ const BookList = () => {
         <Button onClick={toggleOnlyFavorites}>
           Show favourite <StarSvg />
         </Button>
-        <Button onClick={setFilters}>Filter by name</Button>
+        <Button onClick={setFilters}>
+          Filter by name
+          {filterBy === 'title' ? <Arrow direction="down" /> : null}
+          {filterBy === '-title' ? <Arrow direction="up" /> : null}
+        </Button>
       </FilterButtons>
       <PagesControls>
         <Button onClick={prevPage}>Prev page</Button>
@@ -162,44 +165,46 @@ const BookList = () => {
       </PagesControls>
       {isLoading ? <Loading /> : null}
       {!isLoading && books.length === 0 ? <p>No matching books</p> : null}
-      {books.length && !onlyFavorites
-        ? books.map((book) => {
-            const { id, resources, title, agents } = book;
-            if (!title) return;
-            const imgLink = getImageLink(resources);
-            return (
-              <BookItem
-                key={id}
-                id={id}
-                title={title}
-                toggleFavorite={() => toggleFavorite(book)}
-                image={imgLink}
-                isFavorite={isFavorite(id)}
-                authors={getAuthors(agents)}
-              />
-            );
-          })
-        : null}
-      {onlyFavorites && favorites.length
-        ? favorites.map((book) => {
-            const { id, resources, title, agents } = book;
-            if (!title) return;
-            const imgLink = getImageLink(resources);
-            return (
-              <BookItem
-                key={id}
-                id={id}
-                title={title}
-                toggleFavorite={() => toggleFavorite(book)}
-                image={imgLink}
-                isFavorite={isFavorite(id)}
-                authors={getAuthors(agents)}
-              />
-            );
-          })
-        : null}
+      <BookList>
+        {books.length && !onlyFavorites
+          ? books.map((book) => {
+              const { id, resources, title, agents } = book;
+              if (!title) return;
+              const imgLink = getImageLink(resources);
+              return (
+                <BookItem
+                  key={id}
+                  id={id}
+                  title={title}
+                  toggleFavorite={() => toggleFavorite(book)}
+                  image={imgLink}
+                  isFavorite={isFavorite(id)}
+                  authors={getAuthors(agents)}
+                />
+              );
+            })
+          : null}
+        {onlyFavorites && favorites.length
+          ? favorites.map((book) => {
+              const { id, resources, title, agents } = book;
+              if (!title) return;
+              const imgLink = getImageLink(resources);
+              return (
+                <BookItem
+                  key={id}
+                  id={id}
+                  title={title}
+                  toggleFavorite={() => toggleFavorite(book)}
+                  image={imgLink}
+                  isFavorite={isFavorite(id)}
+                  authors={getAuthors(agents)}
+                />
+              );
+            })
+          : null}
+      </BookList>
     </main>
   );
 };
 
-export default BookList;
+export default Books;
