@@ -9,6 +9,7 @@ import { asyncDebounce } from 'helpers/asyncDebounce';
 import Loading from 'components/Loading/Loading';
 import { BookList, FilterButtons, PagesControls } from './Books.styles';
 import { Arrow } from 'components/Arrow/Arrow';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 interface IResources {
   id: number;
@@ -33,14 +34,16 @@ interface IBook {
 
 const Books = () => {
   const [books, setBooks] = useState<IBook[]>([]);
-  const [page, setPage] = useState(1);
-  const [favorites, setFavorites] = useState<IBook[]>([]);
-  const [filterBy, setFilterBy] = useState<Filters>('');
-  const [searchValue, setSearchValue] = useState('');
+  // const [favorites, setFavorites] = useState<IBook[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [page, setPage] = useState(1);
+  const [searchValue, setSearchValue] = useState('');
+  const [filterBy, setFilterBy] = useState<Filters>('');
   const [prevPageExist, setPrevPageExist] = useState(false);
   const [nextPageExist, setNextPageExist] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [favorites, setFavorites] = useLocalStorage<IBook[]>('favorites');
 
   const toggleFavorite = (book: IBook) => {
     if (favorites.includes(book)) {
